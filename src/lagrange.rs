@@ -3,44 +3,44 @@
 const PRIME: u32 = 16411;
 
 fn mod_pow(base: u32, exponent: u32) -> u32 {
-  let mut result = 1;
-  let mut base = base;
-  let mut exp = exponent;
+    let mut result = 1;
+    let mut base = base;
+    let mut exp = exponent;
 
-  while exp > 0 {
-      if exp & 1 == 1 {
-          result = ((result * base) % PRIME) as u32;
-      }
-      base = (base * base) % PRIME;
-      exp >>= 1;
-  }
-  result
+    while exp > 0 {
+        if exp & 1 == 1 {
+            result = ((result * base) % PRIME) as u32;
+        }
+        base = (base * base) % PRIME;
+        exp >>= 1;
+    }
+    result
 }
 
 // modular inverse using Fermat's Little Theorem
 fn mod_inverse(a: u32) -> u32 {
-  mod_pow(a, PRIME - 2)
+    mod_pow(a, PRIME - 2)
 }
 
 fn lagrange_interpolate(y_values: &[u32], x: u32) -> u32 {
-  let mut result = 0;
+    let mut result = 0;
 
-  for i in 0..y_values.len() {
-      let mut numerator = 1;
-      let mut denominator = 1;
+    for i in 0..y_values.len() {
+        let mut numerator = 1;
+        let mut denominator = 1;
 
-      for j in 0..y_values.len() {
-          if i != j {
-              numerator = (numerator * ((x + PRIME - j as u32) % PRIME)) % PRIME;
-              denominator = (denominator * ((i as u32 + PRIME - j as u32) % PRIME)) % PRIME;
-          }
-      }
+        for j in 0..y_values.len() {
+            if i != j {
+                numerator = (numerator * ((x + PRIME - j as u32) % PRIME)) % PRIME;
+                denominator = (denominator * ((i as u32 + PRIME - j as u32) % PRIME)) % PRIME;
+            }
+        }
 
-      let term = (y_values[i] * numerator * mod_inverse(denominator)) % PRIME;
-      result = (result + term) % PRIME;
-  }
+        let term = (y_values[i] * numerator * mod_inverse(denominator)) % PRIME;
+        result = (result + term) % PRIME;
+    }
 
-  result
+    result
 }
 
 pub fn extend(points: &[u32], k: usize) -> Vec<u32> {
